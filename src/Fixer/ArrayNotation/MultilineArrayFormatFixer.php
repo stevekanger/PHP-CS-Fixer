@@ -77,6 +77,16 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
         ]);
     }
 
+    protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
+    {
+        return new FixerConfigurationResolver([
+            (new FixerOptionBuilder('on_singleline', 'Defines how to handle arrays that do not contain newlines.'))
+                ->setAllowedValues(['ensure_fully_multiline', 'ensure_fully_multiline_ignore_empty', 'ignore'])
+                ->setDefault('ignore')
+                ->getOption(),
+        ]);
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -101,16 +111,6 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
     public function isCandidate(Tokens $tokens): bool
     {
         return $tokens->isAnyTokenKindsFound($this->array_opening_tags);
-    }
-
-    protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
-    {
-        return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('on_singleline', 'Defines how to handle arrays that do not contain newlines.'))
-                ->setAllowedValues(['ensure_fully_multiline', 'ensure_fully_multiline_ignore_empty', 'ignore'])
-                ->setDefault('ignore')
-                ->getOption(),
-        ]);
     }
 
     protected function applyFix(\SplFileInfo $file, Tokens $tokens): void
