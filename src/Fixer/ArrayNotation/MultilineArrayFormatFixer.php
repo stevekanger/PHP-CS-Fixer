@@ -160,6 +160,8 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
 
         if ($isEmpty && 'ensure_fully_multiline_ignore_empty' === $onSingleline) {
             return false;
+        } elseif (!$isEmpty && 'ensure_fully_multiline_ignore_empty' === $onSingleline) {
+            return true;
         }
 
         return 'ensure_fully_multiline' === $onSingleline;
