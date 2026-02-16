@@ -522,6 +522,36 @@ $arr = array( "a",
 );',
         ];
 
+        yield 'Short syntax: Single line array nested empty remains untouched with "on_singleline" = "ensure_fully_multiline_ignore_empty".' => [
+            '<?php
+$arr = [
+    "a",
+    "b" => [],
+    "c" => [
+        "a",
+        "b"
+    ]
+];',
+            '<?php
+$arr = [ "a", "b" => [], "c" => [ "a", "b" ] ];',
+            ['on_singleline' => 'ensure_fully_multiline_ignore_empty'],
+        ];
+
+        yield 'Long syntax: Single line array nested empty remains untouched with "on_singleline" = "ensure_fully_multiline_ignore_empty".' => [
+            '<?php
+$arr = array(
+    "a",
+    "b" => array(),
+    "c" => array(
+        "a",
+        "b"
+    )
+);',
+            '<?php
+$arr = array( "a", "b" => array(), "c" => array( "a", "b" ) );',
+            ['on_singleline' => 'ensure_fully_multiline_ignore_empty'],
+        ];
+
         // ===============================================
         // Destructuring tests
         // ===============================================
