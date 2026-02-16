@@ -230,7 +230,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
     /**
      * Inserts the new line and indent after a specified index.
      *
-     * @param int %$closeIndex
+     * @param int &$closeIndex
      */
     private function insertLineEndIndentAfter(Tokens $tokens, int $index, int &$closeIndex, string $lineEndIndent): int
     {
@@ -273,7 +273,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
     /**
      * Inserts the new line and indent before a specified index.
      *
-     * @param int %$closeIndex
+     * @param int &$closeIndex
      *
      * @returns int
      */
@@ -429,8 +429,6 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
      *
      * This function is derived the beginging of
      * PhpCsFixer\Fixer\FunctionNotation::ensureFunctionFullyMultiline
-     *
-     * @param Tokens $tokens The passed tokens object
      */
     private function getBaseIndent(Tokens $tokens, int $openIndex): string
     {
