@@ -43,18 +43,30 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
 
     public static function provideFixCases(): iterable
     {
-        // default config
-        yield 'Single line array remains untouched.' => [
+        // ===============================================
+        // Array tests
+        // ===============================================
+        yield 'Short syntax: Single line array remains untouched.' => [
             '<?php
 $arr = [ 1, 2, 3 ];',
         ];
 
-        yield 'Single line nested array remains untouched.' => [
+        yield 'Long syntax: Single line array remains untouched.' => [
+            '<?php
+$arr = array( 1, 2, 3 );',
+        ];
+
+        yield 'Short syntax: Single line nested array remains untouched.' => [
             '<?php
 $arr = [ "one" => [ 1, 2 ] ];',
         ];
 
-        yield 'Multiline array gets formatted.' => [
+        yield 'Long syntax: Single line nested array remains untouched.' => [
+            '<?php
+$arr = array( "one" => array( 1, 2 ) );',
+        ];
+
+        yield 'Short syntax: Multiline array gets formatted.' => [
             '<?php
 $arr = [
     1,
@@ -66,7 +78,19 @@ $arr = [1, 2, 3
             ];',
         ];
 
-        yield 'Multiline nested array gets formatted.' => [
+        yield 'Long syntax: Multiline array gets formatted.' => [
+            '<?php
+$arr = array(
+    1,
+    2,
+    3
+);',
+            '<?php
+$arr = array(1, 2, 3
+            );',
+        ];
+
+        yield 'Short syntax: Multiline nested array gets formatted.' => [
             '<?php
 $arr = [
     1,
@@ -81,7 +105,22 @@ $arr = [1, 2, 3 => [
             ];',
         ];
 
-        yield 'Multiline nested array with siblings gets formatted.' => [
+        yield 'Long syntax: Multiline nested array gets formatted.' => [
+            '<?php
+$arr = array(
+    1,
+    2,
+    3 => array(
+        "one" => 1
+    )
+);',
+            '<?php
+$arr = array(1, 2, 3 => array(
+            "one" => 1 )
+            );',
+        ];
+
+        yield 'Short syntax: Multiline nested array with siblings gets formatted.' => [
             '<?php
 $arr = [
     "a" => [
@@ -105,7 +144,31 @@ $arr = [
 ];',
         ];
 
-        yield 'Multiline deeply nested array gets formatted.' => [
+        yield 'Long syntax: Multiline nested array with siblings gets formatted.' => [
+            '<?php
+$arr = array(
+    "a" => array(
+        "a_1" => "val_a"
+    ),
+    "b" => array(
+        "b_1" => "val_b"
+    ),
+    "c" => array(
+        "c_1" => "val_c"
+    )
+);',
+            '<?php
+$arr = array(
+    "a" => array( "a_1" => "val_a"
+),
+"b" => array(
+        "b_1" => "val_b" ),
+                "c" => array(
+                    "c_1" => "val_c" )
+);',
+        ];
+
+        yield 'Short syntax: Multiline deeply nested array gets formatted.' => [
             '<?php
 $arr = [
     "level_1" => [
@@ -184,29 +247,432 @@ $arr = [
 ];',
         ];
 
-        yield 'Long syntax array gets formatted.' => [
+        yield 'Long syntax: Multiline deeply nested array gets formatted.' => [
             '<?php
 $arr = array(
-    "one",
-    "two" => array( "one" )
-);',
-            '<?php
-$arr = array( "one",
-            "two" => array( "one" ));',
-        ];
-
-        yield 'Long syntax nested array gets formatted with on_singleline = ensure_fully_multiline.' => [
-            '<?php
-$arr = array(
-    "one",
-    "two" => array(
-        "one"
+    "level_1" => array(
+        "level_2" => array(
+            "level_3" => array(
+                "level_4" => array(
+                    "level_5" => array(
+                        "level_6" => array(
+                            "level_7" => array(
+                                "level_8" => array(
+                                    "level_9" => array(
+                                        "level_10" => array(
+                                            "deep_value" => "You found me!",
+                                            "deep_array" => array(1, 2, 3, 4, 5),
+                                            "deep_assoc" => array("key" => "value"),
+                                            "deep_bool" => true,
+                                            "deep_null" => null,
+                                            "deep_float" => 3.14159
+                                        )
+                                    )
+                                )
+                            ),
+                            "branch_a" => array(
+                                "sub_branch_1" => array(
+                                    "sub_sub_1" => array(
+                                        "data" => "nested data 1",
+                                        "number" => 42,
+                                        "active" => true,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
     ),
 );',
             '<?php
-$arr = array( "one",
-            "two" => array( "one" ),);',
+$arr = array(
+    "level_1" => array(
+      "level_2" => array(
+    "level_3" => array(
+        "level_4" => array(
+      "level_5" => array(
+            "level_6" => array(
+          "level_7" => array(
+        "level_8" => array(
+            "level_9" => array(
+          "level_10" => array(
+                "deep_value" => "You found me!",
+            "deep_array" => array(1, 2, 3, 4, 5),
+                "deep_assoc" => array("key" => "value"),
+              "deep_bool" => true,
+                "deep_null" => null,
+              "deep_float" => 3.14159
+          )
+            )
+        )
+          ),
+  "branch_a" => array(
+            "sub_branch_1" => array(
+          "sub_sub_1" => array(
+                "data" => "nested data 1",
+              "number" => 42,
+"active" => true,
+),
+),
+),
+),
+),
+),
+),
+),
+),
+);',
+        ];
+
+        yield 'Short syntax: Deep nested associative and indexed array fomatted.' => [
+            '<?php
+$arr = [
+    [
+        [
+            [
+                [
+                    [
+                        [
+                            [
+                                "a" => "associated_1",
+                                0 => "indexed_1",
+                                1 => "indexed_2"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+];',
+            '<?php
+$arr = [[[[[[[["a" => "associated_1",
+    0 => "indexed_1", 1 => "indexed_2"]
+]]]]]]];',
+        ];
+
+        yield 'Long syntax: Deep nested associative and indexed array fomatted.' => [
+            '<?php
+$arr = array(
+    array(
+        array(
+            array(
+                array(
+                    array(
+                        array(
+                            array(
+                                "a" => "associated_1",
+                                0 => "indexed_1",
+                                1 => "indexed_2"
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+);',
+            '<?php
+$arr = array(array(array(array(array(array(array(array("a" => "associated_1",
+    0 => "indexed_1", 1 => "indexed_2")
+)))))));',
+        ];
+
+        yield 'Short syntax: Deep nested singleline associative and indexed array gets formatted with "on_singleline" = "ensure_fully_multiline".' => [
+            '<?php
+$arr = [
+    [
+        [
+            [
+                [
+                    [
+                        [
+                            [
+                                "a" => "associated_1",
+                                0 => "indexed_1",
+                                1 => "indexed_2"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+];',
+            '<?php
+$arr = [[[[[[[["a" => "associated_1", 0 => "indexed_1", 1 => "indexed_2"] ]]]]]]];',
             ['on_singleline' => 'ensure_fully_multiline'],
+        ];
+
+        yield 'Long syntax: Deep nested singleline associative and indexed array gets formatted with "on_singleline" = "ensure_fully_multiline".' => [
+            '<?php
+$arr = array(
+    array(
+        array(
+            array(
+                array(
+                    array(
+                        array(
+                            array(
+                                "a" => "associated_1",
+                                0 => "indexed_1",
+                                1 => "indexed_2"
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+);',
+            '<?php
+$arr = array(array(array(array(array(array(array(array("a" => "associated_1", 0 => "indexed_1", 1 => "indexed_2"))))))));',
+            ['on_singleline' => 'ensure_fully_multiline'],
+        ];
+
+        yield 'Short syntax: Multiline array with comments gets formatted.' => [
+            '<?php
+$arr = [
+    "a",
+    "b", // comment
+    "c" // comment
+];',
+            '<?php
+$arr = ["a",
+        "b", // comment
+
+
+            "c" // comment
+];',
+        ];
+
+        yield 'Long syntax: Multiline array with comments gets formatted.' => [
+            '<?php
+$arr = array(
+    "a",
+    "b", // comment
+    "c" // comment
+);',
+            '<?php
+$arr = array("a",
+        "b", // comment
+
+
+            "c" // comment
+);',
+        ];
+
+        yield 'Short syntax: Array with comment between gets formatted.' => [
+            '<?php
+$arr = [
+    "a",
+    "b", /* comment */
+    "c"
+];',
+            '<?php
+$arr = [ "a", "b", /* comment */ "c"
+];',
+        ];
+
+        yield 'Long syntax: Array with comment between gets formatted.' => [
+            '<?php
+$arr = array(
+    "a",
+    "b", /* comment */
+    "c"
+);',
+            '<?php
+$arr = array( "a", "b", /* comment */ "c"
+);',
+        ];
+
+        yield 'Short syntax: Nested array with comments gets formatted.' => [
+            '<?php
+$arr = [
+    "a",
+    "b" => [
+        "one", // comment
+    ],
+    "c" // comment
+];',
+            '<?php
+$arr = [ "a",
+    "b" => [ "one", // comment
+        ],
+    "c" // comment
+];',
+        ];
+
+        yield 'Long syntax: Nested array with comments gets formatted.' => [
+            '<?php
+$arr = array(
+    "a",
+    "b" => array(
+        "one", // comment
+    ),
+    "c" // comment
+);',
+            '<?php
+$arr = array( "a",
+    "b" => array( "one", // comment
+        ),
+    "c" // comment
+);',
+        ];
+
+        // ===============================================
+        // Destructuring tests
+        // ===============================================
+        yield 'Multiline destructuring properly formatted.' => [
+            '<?php
+[
+    $a,
+    $b,
+    $c
+] = $arr;',
+            '<?php
+[
+$a,
+        $b,
+$c
+] = $arr;',
+        ];
+
+        yield 'Multiline destructuring with list() properly formatted.' => [
+            '<?php
+list(
+    $a,
+    $b,
+    $c
+) = $arr;',
+            '<?php
+list(
+$a,
+        $b,
+$c
+) = $arr;',
+        ];
+
+        yield 'Multiline destructuring with comments properly formatted.' => [
+            '<?php
+[ // comment
+    $a,
+    $b, // comment
+    $c // comment
+] = $arr;',
+            '<?php
+[ // comment
+$a,
+        $b, // comment
+$c // comment
+] = $arr;',
+        ];
+
+        yield 'Multiline destructuring with multiple comments on same line properly formatted.' => [
+            '<?php
+[ // comment
+    $a,
+    $b, /* comment */ /* comment */
+    $c // comment
+] = $arr;',
+            '<?php
+[ // comment
+$a,
+        $b, /* comment */ /* comment */
+$c // comment
+] = $arr;',
+        ];
+
+        yield 'Multiline destructuring with list() and comments properly formatted.' => [
+            '<?php
+list( // comment
+    $a,
+    $b, // comment
+    $c // comment
+) = $arr;',
+            '<?php
+list( // comment
+$a,
+        $b, // comment
+$c // comment
+) = $arr;',
+        ];
+
+        yield 'Multiline destructuring with list() and multiple comments on same line properly formatted.' => [
+            '<?php
+list( // comment
+    $a,
+    $b, /* comment */ /* comment */
+    $c // comment
+) = $arr;',
+            '<?php
+list( // comment
+$a,
+        $b, /* comment */ /* comment */
+$c // comment
+) = $arr;',
+        ];
+
+        yield 'Multiline destructuring comments between on same line properly formatted.' => [
+            '<?php
+[
+    $a,
+    $b, /* comment */ /* comment */
+    $c
+] = $arr;',
+            '<?php
+[ $a, $b, /* comment */ /* comment */
+$c
+] = $arr;',
+        ];
+
+        yield 'Multiline destructuring with list() and comments between on same line properly formatted.' => [
+            '<?php
+list(
+    $a,
+    $b, /* comment */ /* comment */
+    $c
+) = $arr;',
+            '<?php
+list( $a, $b, /* comment */ /* comment */
+$c
+) = $arr;',
+        ];
+
+        yield 'Destructuring singleline with "on_singleline" = "ensure_fully_multiline" properly formatted.' => [
+            '<?php
+[
+    $a,
+    $b,
+    $c
+] = $arr;',
+            '<?php
+[ $a, $b, $c ] = $arr;',
+            ['on_singleline' => 'ensure_fully_multiline'],
+        ];
+
+        yield 'Destructuring singleline with list() and "on_singleline" = "ensure_fully_multiline" properly formatted.' => [
+            '<?php
+list(
+    $a,
+    $b,
+    $c
+) = $arr;',
+            '<?php
+list($a, $b, $c ) = $arr;',
+            ['on_singleline' => 'ensure_fully_multiline'],
+        ];
+
+        yield 'Destructuring singleline left alone.' => [
+            '<?php
+[ $a, $b, $c ] = $arr;',
+        ];
+
+        yield 'Destructuring singleline with list() left alone.' => [
+            '<?php
+[ $a, $b, $c ] = $arr;',
         ];
     }
 }
