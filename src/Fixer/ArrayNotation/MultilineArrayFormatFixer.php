@@ -263,11 +263,9 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
             [\T_WHITESPACE],
         );
 
-        $newIndex = $nextNonWhitespace - 1;
+        $this->clearRange($tokens, $targetIndex + 1, $nextNonWhitespace - 1);
 
-        $this->clearRange($tokens, $targetIndex + 1, $newIndex);
-
-        return $newIndex;
+        return $nextNonWhitespace - 1;
     }
 
     /**
@@ -306,8 +304,8 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
      */
     private function clearRange(Tokens $tokens, int $start, int $end, array $exclude = []): void
     {
-        for ($index = $start; $index < $end; ++$index) {
-            if (\in_array($index, $exclude, true)) {
+        for ($index = $start; $index <= $end; ++$index) {
+            if ($exclude && \in_array($index, $exclude, true)) {
                 continue;
             }
             $tokens->clearAt($index);
