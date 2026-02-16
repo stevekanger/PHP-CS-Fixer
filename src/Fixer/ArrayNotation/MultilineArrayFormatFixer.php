@@ -77,16 +77,6 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
         ]);
     }
 
-    protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
-    {
-        return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('on_singleline', 'Defines how to handle arrays that do not contain newlines.'))
-                ->setAllowedValues(['ensure_fully_multiline', 'ensure_fully_multiline_ignore_empty', 'ignore'])
-                ->setDefault('ignore')
-                ->getOption(),
-        ]);
-    }
-
     /**
      * {@inheritdoc}
      *
@@ -111,6 +101,16 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
     public function isCandidate(Tokens $tokens): bool
     {
         return $tokens->isAnyTokenKindsFound($this->array_opening_tags);
+    }
+
+    protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
+    {
+        return new FixerConfigurationResolver([
+            (new FixerOptionBuilder('on_singleline', 'Defines how to handle arrays that do not contain newlines.'))
+                ->setAllowedValues(['ensure_fully_multiline', 'ensure_fully_multiline_ignore_empty', 'ignore'])
+                ->setDefault('ignore')
+                ->getOption(),
+        ]);
     }
 
     protected function applyFix(\SplFileInfo $file, Tokens $tokens): void
@@ -230,7 +230,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
     /**
      * Inserts the new line and indent after a specified index.
      *
-     * @param int &$closeIndex
+     * @returns int The new index
      */
     private function insertLineEndIndentAfter(Tokens $tokens, int $index, int &$closeIndex, string $lineEndIndent): int
     {
@@ -271,9 +271,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
     /**
      * Inserts the new line and indent before a specified index.
      *
-     * @param int &$closeIndex
-     *
-     * @returns int
+     * @returns int The new index
      */
     private function insertLineEndIndentBefore(Tokens $tokens, int $index, int &$closeIndex, string $lineEndIndent): int
     {
@@ -283,7 +281,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
             $this->insertAt($tokens, $index, \T_WHITESPACE, $lineEndIndent);
             ++$closeIndex;
 
-            return $index + 2;
+            return $index + 1;
         }
 
         $this->replaceAt($tokens, $targetIndex, \T_WHITESPACE, $lineEndIndent);
@@ -296,7 +294,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
 
         $this->clearRange($tokens, $prevNonWhitespace + 1, $targetIndex - 1);
 
-        return $index + 1;
+        return $index;
     }
 
     /**
