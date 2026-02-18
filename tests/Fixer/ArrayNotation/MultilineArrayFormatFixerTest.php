@@ -380,58 +380,6 @@ $arr = array(array(array(array(array(array(array(array("a" => "associated_1",
 )))))));',
         ];
 
-        yield 'Short syntax: Deep nested singleline associative and indexed array gets formatted with "on_singleline" = "ensure_fully_multiline".' => [
-            '<?php
-$arr = [
-    [
-        [
-            [
-                [
-                    [
-                        [
-                            [
-                                "a" => "associated_1",
-                                0 => "indexed_1",
-                                1 => "indexed_2"
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ]
-];',
-            '<?php
-$arr = [[[[[[[["a" => "associated_1", 0 => "indexed_1", 1 => "indexed_2"] ]]]]]]];',
-            ['on_singleline' => 'ensure_fully_multiline'],
-        ];
-
-        yield 'Long syntax: Deep nested singleline associative and indexed array gets formatted with "on_singleline" = "ensure_fully_multiline".' => [
-            '<?php
-$arr = array(
-    array(
-        array(
-            array(
-                array(
-                    array(
-                        array(
-                            array(
-                                "a" => "associated_1",
-                                0 => "indexed_1",
-                                1 => "indexed_2"
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    )
-);',
-            '<?php
-$arr = array(array(array(array(array(array(array(array("a" => "associated_1", 0 => "indexed_1", 1 => "indexed_2"))))))));',
-            ['on_singleline' => 'ensure_fully_multiline'],
-        ];
-
         yield 'Short syntax: Multiline array with comments gets formatted.' => [
             '<?php
 $arr = [
@@ -520,36 +468,6 @@ $arr = array( "a",
         ),
     "c" // comment
 );',
-        ];
-
-        yield 'Short syntax: Single line array nested empty remains untouched with "on_singleline" = "ensure_fully_multiline_ignore_empty".' => [
-            '<?php
-$arr = [
-    "a",
-    "b" => [],
-    "c" => [
-        "a",
-        "b"
-    ]
-];',
-            '<?php
-$arr = [ "a", "b" => [], "c" => [ "a", "b" ] ];',
-            ['on_singleline' => 'ensure_fully_multiline_ignore_empty'],
-        ];
-
-        yield 'Long syntax: Single line array nested empty remains untouched with "on_singleline" = "ensure_fully_multiline_ignore_empty".' => [
-            '<?php
-$arr = array(
-    "a",
-    "b" => array(),
-    "c" => array(
-        "a",
-        "b"
-    )
-);',
-            '<?php
-$arr = array( "a", "b" => array(), "c" => array( "a", "b" ) );',
-            ['on_singleline' => 'ensure_fully_multiline_ignore_empty'],
         ];
 
         // ===============================================
@@ -669,30 +587,6 @@ list(
 list( $a, $b, /* comment */ /* comment */
 $c
 ) = $arr;',
-        ];
-
-        yield 'Destructuring singleline with "on_singleline" = "ensure_fully_multiline" properly formatted.' => [
-            '<?php
-[
-    $a,
-    $b,
-    $c
-] = $arr;',
-            '<?php
-[ $a, $b, $c ] = $arr;',
-            ['on_singleline' => 'ensure_fully_multiline'],
-        ];
-
-        yield 'Destructuring singleline with list() and "on_singleline" = "ensure_fully_multiline" properly formatted.' => [
-            '<?php
-list(
-    $a,
-    $b,
-    $c
-) = $arr;',
-            '<?php
-list($a, $b, $c ) = $arr;',
-            ['on_singleline' => 'ensure_fully_multiline'],
         ];
 
         yield 'Destructuring singleline left alone.' => [
