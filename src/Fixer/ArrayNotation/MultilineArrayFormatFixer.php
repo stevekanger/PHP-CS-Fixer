@@ -70,6 +70,14 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
                     "<?php\n\$a = [1, 2, 3];\n",
                     ['on_singleline' => 'ensure_multiline'],
                 ),
+                new CodeSample(
+                    "<?php\n\$a = [\n];\n",
+                    ['on_empty' => 'ensure_singleline'],
+                ),
+                new CodeSample(
+                    "<?php\n\$a = [];\n",
+                    ['on_empty' => 'ensure_multiline'],
+                ),
             ],
         );
     }
