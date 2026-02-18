@@ -50,6 +50,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
     private const FORMAT_TYPE_IGNORE = 'ignore';
     private const FORMAT_TYPE_MULTILINE = 'multiline';
     private const FORMAT_TYPE_EMPTY_SINGLELINE = 'empty_singleline';
+    private const FORMAT_TYPE_EMPTY_MULTILINE = 'empty_multiline';
 
     private $array_opening_tags = [
         \T_ARRAY,
@@ -172,16 +173,15 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
 
         $formatType = $this->getFormatType($tokens, $openIndex, $closeIndex);
 
-        switch ($formatType) {
+        switch($formatType) {
             case self::FORMAT_TYPE_MULTILINE:
                 return $this->ensureMultiline($tokens, $openIndex, $closeIndex);
-
             case self::FORMAT_TYPE_EMPTY_SINGLELINE:
                 return $this->ensureEmptySingleline($tokens, $openIndex, $closeIndex);
-
+            case self::FORMAT_TYPE_EMPTY_MULTILINE:
+                return $this->ensureEmptyMultiline($tokens, $openIndex, $closeIndex);
             case self::FORMAT_TYPE_IGNORE:
                 return $closeIndex;
-
             default:
                 return $closeIndex;
         }
@@ -212,7 +212,7 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
                 return self::FORMAT_TYPE_EMPTY_SINGLELINE;
             }
             if ('ensure_multiline' === $this->configuration['on_empty']) {
-                return self::FORMAT_TYPE_MULTILINE;
+                return self::FORMAT_TYPE_EMPTY_MULTILINE;
             }
 
             return self::FORMAT_TYPE_IGNORE;
@@ -221,6 +221,23 @@ final class MultilineArrayFormatFixer extends AbstractFixer implements Whitespac
         return 'ensure_multiline' === $this->configuration['on_singleline']
             ? self::FORMAT_TYPE_MULTILINE
             : self::FORMAT_TYPE_IGNORE;
+    }
+
+    /**
+     * Ensures an empty array is multiline with no spaces.
+     */
+    private function ensureEmptyMultiline(Tokens $tokens, int $openIndex, int $closeIndex): int
+    {
+        [$baseLineEndIndent] = $this->getLineEndIndents($tokens, $openIndex);
+
+        $this->insertLineEndIndentAfter(
+            $tokens,
+            $openIndex,
+            $closeIndex,
+            $baseLineEndIndent,
+        );
+
+        return $closeIndex;
     }
 
     /**
