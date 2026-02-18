@@ -49,25 +49,22 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                 '[' => 'array(',
                 ']' => ')',
             ],
-            [
-                [
-                    'name' => 'Single line array remains untouched.',
+            (static function () {
+                yield 'Single line array remains untouched.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [ 1, 2, 3 ];
                         EXPECTED,
-                ],
+                ];
 
-                [
-                    'name' => 'Single line nested array remains untouched.',
+                yield 'Single line nested array remains untouched.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [ "one" => [ 1, 2 ] ];
                         EXPECTED,
-                ],
+                ];
 
-                [
-                    'name' => 'Multiline array gets formatted.',
+                yield 'Multiline array gets formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -81,10 +78,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                         $arr = [1, 2, 3
                                     ];
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'multiline nested array gets formatted.',
+                yield 'Multiline nested array gets formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -101,10 +97,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                                     "one" => 1 ]
                                     ];
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Multiline nested array with siblings gets formatted.',
+                yield 'Multiline nested array with siblings gets formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -130,10 +125,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                                             "c_1" => "val_c" ]
                         ];
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Multiline deeply nested array gets formatted.',
+                yield 'Multiline deeply nested array gets formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -214,10 +208,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                         ],
                         ];
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Deep nested associative and indexed array fomatted.',
+                yield 'Deep nested associative and indexed array fomatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -246,10 +239,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                             0 => "indexed_1", 1 => "indexed_2"]
                         ]]]]]]];
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Multiline array with comments gets formatted.',
+                yield 'Multiline array with comments gets formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -267,10 +259,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                                     "c" // comment
                         ];
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Array with comment between gets formatted.',
+                yield 'Array with comment between gets formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -284,10 +275,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                         $arr = [ "a", "b", /* comment */ "c"
                         ];
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Nested array with comments gets formatted.',
+                yield 'Nested array with comments gets formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         $arr = [
@@ -306,8 +296,8 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                             "c" // comment
                         ];
                         INPUT,
-                ],
-            ],
+                ];
+            })(),
         );
 
         yield from self::withAlternateSyntaxCases(
@@ -316,9 +306,8 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                 '[' => 'list(',
                 ']' => ')',
             ],
-            [
-                [
-                    'name' => 'Multiline destructuring properly formatted.',
+            (static function () {
+                yield 'Multiline destructuring properly formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         [
@@ -335,10 +324,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                         $c
                         ] = $arr;
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Multiline destructuring with comments properly formatted.',
+                yield 'Multiline destructuring with comments properly formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         [ // comment
@@ -355,10 +343,9 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                         $c // comment
                         ] = $arr;
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Multiline destructuring with multiple comments on same line properly formatted.',
+                yield 'Multiline destructuring with multiple comments on same line properly formatted.' => [
                     <<<'EXPECTED'
                         <?php
                         [ // comment
@@ -375,46 +362,42 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                         $c // comment
                         ] = $arr;
                         INPUT,
-                ],
+                ];
 
-                [
-                    'name' => 'Destructuring singleline left alone.',
+                yield 'Destructuring singleline left alone.' => [
                     <<<'EXPECTED'
                         <?php
                         [ $a, $b, $c ] = $arr;
                         EXPECTED,
-                ],
-            ],
+                ];
+            })(),
         );
     }
 
     /**
-     * @param array<string, string> $replacers
-     * @param array<array<{0: string, 1?: string, 2?: array, name?: string}>> $cases
+     * @param array<string, string>                                              $replacers
+     * @param \Generator<string, array{0: string, 1?: string, 2?: array<mixed>}> $cases     *
      *
      * @return array<array<string, {0: string, 1?: string, 2?: array}>>
      */
-    private static function withAlternateSyntaxCases(string $syntax, array $replacers, array $cases): array
+    private static function withAlternateSyntaxCases(string $syntax, array $replacers, \Generator $cases): array
     {
         $originalSyntaxCases = [];
         $alternateSyntaxCases = [];
 
-        foreach ($cases as $case) {
+        foreach ($cases as $key => $case) {
             $case[0] = strtr($case[0], $replacers);
             if (isset($case[1])) {
                 $case[1] = strtr($case[1], $replacers);
             }
 
-            if (isset($case['name'])) {
-                $name = $case['name'];
-                unset($case['name']);
-
-                if (isset($originalSyntaxCases[$name])) {
-                    throw new \Exception("Duplicate test case name - {$name}");
+            if ('string' === \gettype($key)) {
+                if (isset($originalSyntaxCases[$key])) {
+                    throw new \Exception("Duplicate test case name - {$key}");
                 }
 
-                $originalSyntaxCases[$name] = $case;
-                $alternateSyntaxCases["{$syntax}: ".$name] = $case;
+                $originalSyntaxCases[$key] = $case;
+                $alternateSyntaxCases["{$syntax}: ".$key] = $case;
             } else {
                 $originalSyntaxCases[] = $case;
                 $alternateSyntaxCases[] = $case;
