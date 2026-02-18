@@ -297,6 +297,100 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                         ];
                         INPUT,
                 ];
+
+                yield 'Empty multiline array gets converted to singleline' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [
+
+                        ];
+                        INPUT,
+                ];
+
+                yield 'Empty singleline array gets converted to multiline with "on_empty" = "ensure_multiline"' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [];
+                        INPUT,
+                    ['on_empty' => 'ensure_multiline'],
+                ];
+
+                yield 'Singleline array gets formatted to multiline with "on_singleline" = "ensure_multiline"' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            'a',
+                            'b',
+                            'c'
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = ['a', 'b', 'c'];
+                        INPUT,
+                    ['on_singleline' => 'ensure_multiline'],
+                ];
+
+                yield 'Nested singleline array gets formatted to multiline with "on_singleline" = "ensure_multiline"' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            'a',
+                            'b' => [
+                                'a',
+                                'b'
+                            ],
+                            'c'
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = ['a', 'b' => ['a', 'b'], 'c'];
+                        INPUT,
+                    ['on_singleline' => 'ensure_multiline'],
+                ];
+
+                yield 'Nested empty array remains singleline with "on_singleline" = "ensure_multiline"' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            'a',
+                            'b' => [],
+                            'c'
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = ['a', 'b' => [], 'c'];
+                        INPUT,
+                    ['on_singleline' => 'ensure_multiline'],
+                ];
+
+                yield 'Nested empty array formats to multiline with "on_singleline" = "ensure_multiline" and "on_empty" = "ensure_multiline"' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            'a',
+                            'b' => [
+                            ],
+                            'c'
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = ['a', 'b' => [], 'c'];
+                        INPUT,
+                    ['on_singleline' => 'ensure_multiline', 'on_empty' => 'ensure_multiline'],
+                ];
             })(),
         );
 
