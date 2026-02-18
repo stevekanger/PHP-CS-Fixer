@@ -43,114 +43,121 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
 
     public static function provideFixCases(): iterable
     {
-        yield from self::withAlternateSyntaxCases('Long Array', [
-            'Single line array remains untouched.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [ 1, 2, 3 ];
-                    EXPECTED,
+        yield from self::withAlternateSyntaxCases(
+            'Long Array',
+            [
+                '[' => 'array(',
+                ']' => ')',
             ],
+            [
+                'Single line array remains untouched.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [ 1, 2, 3 ];
+                        EXPECTED,
+                ],
 
-            'Single line nested array remains untouched.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [ "one" => [ 1, 2 ] ];
-                    EXPECTED,
-            ],
+                'Single line nested array remains untouched.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [ "one" => [ 1, 2 ] ];
+                        EXPECTED,
+                ],
 
-            'Multiline array gets formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        1,
-                        2,
-                        3
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = [1, 2, 3
-                                ];
-                    INPUT,
-            ],
+                'Multiline array gets formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            1,
+                            2,
+                            3
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [1, 2, 3
+                                    ];
+                        INPUT,
+                ],
 
-            'multiline nested array gets formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        1,
-                        2,
-                        3 => [
-                            "one" => 1
-                        ]
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = [1, 2, 3 => [
-                                "one" => 1 ]
-                                ];
-                    INPUT,
-            ],
+                'multiline nested array gets formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            1,
+                            2,
+                            3 => [
+                                "one" => 1
+                            ]
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [1, 2, 3 => [
+                                    "one" => 1 ]
+                                    ];
+                        INPUT,
+                ],
 
-            'Multiline nested array with siblings gets formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        "a" => [
-                            "a_1" => "val_a"
+                'Multiline nested array with siblings gets formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            "a" => [
+                                "a_1" => "val_a"
+                            ],
+                            "b" => [
+                                "b_1" => "val_b"
+                            ],
+                            "c" => [
+                                "c_1" => "val_c"
+                            ]
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [
+                            "a" => [ "a_1" => "val_a"
                         ],
                         "b" => [
-                            "b_1" => "val_b"
-                        ],
-                        "c" => [
-                            "c_1" => "val_c"
-                        ]
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = [
-                        "a" => [ "a_1" => "val_a"
-                    ],
-                    "b" => [
-                            "b_1" => "val_b" ],
-                                    "c" => [
-                                        "c_1" => "val_c" ]
-                    ];
-                    INPUT,
-            ],
+                                "b_1" => "val_b" ],
+                                        "c" => [
+                                            "c_1" => "val_c" ]
+                        ];
+                        INPUT,
+                ],
 
-            'Multiline deeply nested array gets formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        "level_1" => [
-                            "level_2" => [
-                                "level_3" => [
-                                    "level_4" => [
-                                        "level_5" => [
-                                            "level_6" => [
-                                                "level_7" => [
-                                                    "level_8" => [
-                                                        "level_9" => [
-                                                            "level_10" => [
-                                                                "deep_value" => "You found me!",
-                                                                "deep_array" => [1, 2, 3, 4, 5],
-                                                                "deep_assoc" => ["key" => "value"],
-                                                                "deep_bool" => true,
-                                                                "deep_null" => null,
-                                                                "deep_float" => 3.14159
+                'Multiline deeply nested array gets formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            "level_1" => [
+                                "level_2" => [
+                                    "level_3" => [
+                                        "level_4" => [
+                                            "level_5" => [
+                                                "level_6" => [
+                                                    "level_7" => [
+                                                        "level_8" => [
+                                                            "level_9" => [
+                                                                "level_10" => [
+                                                                    "deep_value" => "You found me!",
+                                                                    "deep_array" => [1, 2, 3, 4, 5],
+                                                                    "deep_assoc" => ["key" => "value"],
+                                                                    "deep_bool" => true,
+                                                                    "deep_null" => null,
+                                                                    "deep_float" => 3.14159
+                                                                ]
                                                             ]
                                                         ]
-                                                    ]
-                                                ],
-                                                "branch_a" => [
-                                                    "sub_branch_1" => [
-                                                        "sub_sub_1" => [
-                                                            "data" => "nested data 1",
-                                                            "number" => 42,
-                                                            "active" => true,
+                                                    ],
+                                                    "branch_a" => [
+                                                        "sub_branch_1" => [
+                                                            "sub_sub_1" => [
+                                                                "data" => "nested data 1",
+                                                                "number" => 42,
+                                                                "active" => true,
+                                                            ],
                                                         ],
                                                     ],
                                                 ],
@@ -159,249 +166,237 @@ final class MultilineArrayFormatFixerTest extends AbstractFixerTestCase
                                     ],
                                 ],
                             ],
-                        ],
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = [
-                        "level_1" => [
-                          "level_2" => [
-                        "level_3" => [
-                            "level_4" => [
-                          "level_5" => [
-                                "level_6" => [
-                              "level_7" => [
-                            "level_8" => [
-                                "level_9" => [
-                              "level_10" => [
-                                    "deep_value" => "You found me!",
-                                "deep_array" => [1, 2, 3, 4, 5],
-                                    "deep_assoc" => ["key" => "value"],
-                                  "deep_bool" => true,
-                                    "deep_null" => null,
-                                  "deep_float" => 3.14159
-                              ]
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [
+                            "level_1" => [
+                              "level_2" => [
+                            "level_3" => [
+                                "level_4" => [
+                              "level_5" => [
+                                    "level_6" => [
+                                  "level_7" => [
+                                "level_8" => [
+                                    "level_9" => [
+                                  "level_10" => [
+                                        "deep_value" => "You found me!",
+                                    "deep_array" => [1, 2, 3, 4, 5],
+                                        "deep_assoc" => ["key" => "value"],
+                                      "deep_bool" => true,
+                                        "deep_null" => null,
+                                      "deep_float" => 3.14159
+                                  ]
+                                    ]
                                 ]
-                            ]
-                              ],
-                      "branch_a" => [
-                                "sub_branch_1" => [
-                              "sub_sub_1" => [
-                                    "data" => "nested data 1",
-                                  "number" => 42,
-                    "active" => true,
-                    ],
-                    ],
-                    ],
-                    ],
-                    ],
-                    ],
-                    ],
-                    ],
-                    ],
-                    ];
-                    INPUT,
-            ],
+                                  ],
+                          "branch_a" => [
+                                    "sub_branch_1" => [
+                                  "sub_sub_1" => [
+                                        "data" => "nested data 1",
+                                      "number" => 42,
+                        "active" => true,
+                        ],
+                        ],
+                        ],
+                        ],
+                        ],
+                        ],
+                        ],
+                        ],
+                        ],
+                        ];
+                        INPUT,
+                ],
 
-            'Deep nested associative and indexed array fomatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        [
+                'Deep nested associative and indexed array fomatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
                             [
                                 [
                                     [
                                         [
                                             [
                                                 [
-                                                    "a" => "associated_1",
-                                                    0 => "indexed_1",
-                                                    1 => "indexed_2"
+                                                    [
+                                                        "a" => "associated_1",
+                                                        0 => "indexed_1",
+                                                        1 => "indexed_2"
+                                                    ]
                                                 ]
                                             ]
                                         ]
                                     ]
                                 ]
                             ]
-                        ]
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = [[[[[[[["a" => "associated_1",
-                        0 => "indexed_1", 1 => "indexed_2"]
-                    ]]]]]]];
-                    INPUT,
-            ],
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [[[[[[[["a" => "associated_1",
+                            0 => "indexed_1", 1 => "indexed_2"]
+                        ]]]]]]];
+                        INPUT,
+                ],
 
-            'Multiline array with comments gets formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        "a",
-                        "b", // comment
-                        "c" // comment
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = ["a",
+                'Multiline array with comments gets formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            "a",
                             "b", // comment
+                            "c" // comment
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = ["a",
+                                "b", // comment
 
 
-                                "c" // comment
-                    ];
-                    INPUT,
-            ],
+                                    "c" // comment
+                        ];
+                        INPUT,
+                ],
 
-            'Array with comment between gets formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        "a",
-                        "b", /* comment */
-                        "c"
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = [ "a", "b", /* comment */ "c"
-                    ];
-                    INPUT,
-            ],
+                'Array with comment between gets formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            "a",
+                            "b", /* comment */
+                            "c"
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [ "a", "b", /* comment */ "c"
+                        ];
+                        INPUT,
+                ],
 
-            'Nested array with comments gets formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    $arr = [
-                        "a",
-                        "b" => [
-                            "one", // comment
-                        ],
-                        "c" // comment
-                    ];
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    $arr = [ "a",
-                        "b" => [ "one", // comment
+                'Nested array with comments gets formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        $arr = [
+                            "a",
+                            "b" => [
+                                "one", // comment
                             ],
-                        "c" // comment
-                    ];
-                    INPUT,
+                            "c" // comment
+                        ];
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        $arr = [ "a",
+                            "b" => [ "one", // comment
+                                ],
+                            "c" // comment
+                        ];
+                        INPUT,
+                ],
             ],
-        ]);
+        );
 
-        yield from self::withAlternateSyntaxCases('Destructuring List', [
-            'Multiline destructuring properly formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    [
-                        $a,
-                        $b,
-                        $c
-                    ] = $arr;
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    [
-                    $a,
+        yield from self::withAlternateSyntaxCases(
+            'Destructuring List',
+            [
+                '[' => 'list(',
+                ']' => ')',
+            ],
+            [
+                'Multiline destructuring properly formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        [
+                            $a,
                             $b,
-                    $c
-                    ] = $arr;
-                    INPUT,
-            ],
-
-            'Multiline destructuring with comments properly formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    [ // comment
+                            $c
+                        ] = $arr;
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        [
                         $a,
-                        $b, // comment
-                        $c // comment
-                    ] = $arr;
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    [ // comment
-                    $a,
+                                $b,
+                        $c
+                        ] = $arr;
+                        INPUT,
+                ],
+
+                'Multiline destructuring with comments properly formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        [ // comment
+                            $a,
                             $b, // comment
-                    $c // comment
-                    ] = $arr;
-                    INPUT,
-            ],
-
-            'Multiline destructuring with multiple comments on same line properly formatted.' => [
-                <<<'EXPECTED'
-                    <?php
-                    [ // comment
+                            $c // comment
+                        ] = $arr;
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        [ // comment
                         $a,
-                        $b, /* comment */ /* comment */
+                                $b, // comment
                         $c // comment
-                    ] = $arr;
-                    EXPECTED,
-                <<<'INPUT'
-                    <?php
-                    [ // comment
-                    $a,
-                            $b, /* comment */ /* comment */
-                    $c // comment
-                    ] = $arr;
-                    INPUT,
-            ],
+                        ] = $arr;
+                        INPUT,
+                ],
 
-            'Destructuring singleline left alone.' => [
-                <<<'EXPECTED'
-                    <?php
-                    [ $a, $b, $c ] = $arr;
-                    EXPECTED,
+                'Multiline destructuring with multiple comments on same line properly formatted.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        [ // comment
+                            $a,
+                            $b, /* comment */ /* comment */
+                            $c // comment
+                        ] = $arr;
+                        EXPECTED,
+                    <<<'INPUT'
+                        <?php
+                        [ // comment
+                        $a,
+                                $b, /* comment */ /* comment */
+                        $c // comment
+                        ] = $arr;
+                        INPUT,
+                ],
+
+                'Destructuring singleline left alone.' => [
+                    <<<'EXPECTED'
+                        <?php
+                        [ $a, $b, $c ] = $arr;
+                        EXPECTED,
+                ],
             ],
-        ]);
+        );
     }
 
     /**
+     * @param array<string, string> $replacers
      * @param array<array<string, {0: string, 1?: string, 2?: array}>> $cases
      *
      * @return array<array<string, {0: string, 1?: string, 2?: array}>>
      */
-    private static function withAlternateSyntaxCases(string $syntax, array $cases): array
+    private static function withAlternateSyntaxCases(string $syntax, array $replacers, array $cases): array
     {
-        $longSyntaxCases = [];
+        $alternateSyntaxCases = [];
 
         foreach ($cases as $key => $case) {
-            $case[0] = self::toAlternateSyntax($syntax, $case[0]);
+            $case[0] = strtr($case[0], $replacers);
             if (isset($case[1])) {
-                $case[1] = self::toAlternateSyntax($syntax, $case[1]);
+                $case[1] = strtr($case[1], $replacers);
             }
 
             if ('string' === \gettype($key)) {
-                $longSyntaxCases["{$syntax}: ".$key] = $case;
+                $alternateSyntaxCases["{$syntax}: ".$key] = $case;
             } else {
-                $longSyntaxCases[] = $case;
+                $alternateSyntaxCases[] = $case;
             }
         }
 
-        return [...$cases, ...$longSyntaxCases];
-    }
-
-    private static function toAlternateSyntax(string $syntax, string $php): string
-    {
-        switch ($syntax) {
-            case 'Long Array':
-                return strtr($php, [
-                    '[' => 'array(',
-                    ']' => ')',
-                ]);
-
-            case 'Destructuring List':
-                return strtr($php, [
-                    '[' => 'list(',
-                    ']' => ')',
-                ]);
-
-            default:
-                return $php;
-        }
+        return [...$cases, ...$alternateSyntaxCases];
     }
 }
