@@ -15,7 +15,11 @@ declare(strict_types=1);
 namespace PhpCsFixer\Tests\Fixer\ClassNotation;
 
 use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
+use PhpCsFixer\Fixer\ClassNotation\SingleClassElementPerStatementFixer;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 
 /**
  * @internal
@@ -30,6 +34,7 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  *
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise.
  */
+#[CoversClass(SingleClassElementPerStatementFixer::class)]
 final class SingleClassElementPerStatementFixerTest extends AbstractFixerTestCase
 {
     /**
@@ -37,6 +42,7 @@ final class SingleClassElementPerStatementFixerTest extends AbstractFixerTestCas
      *
      * @dataProvider provideFixCases
      */
+    #[DataProvider('provideFixCases')]
     public function testFix(string $expected, ?string $input = null, array $configuration = []): void
     {
         $this->fixer->configure($configuration);
@@ -845,8 +851,10 @@ echo Foo::A, Foo::B;
     /**
      * @dataProvider provideFix80Cases
      *
-     * @requires PHP 8.0
+     * @requires PHP >= 8.0.0
      */
+    #[DataProvider('provideFix80Cases')]
+    #[RequiresPhp('>= 8.0.0')]
     public function testFix80(string $expected, string $input): void
     {
         $this->doTest($expected, $input);
@@ -877,8 +885,10 @@ class Foo
     /**
      * @dataProvider provideFix81Cases
      *
-     * @requires PHP 8.1
+     * @requires PHP >= 8.1.0
      */
+    #[DataProvider('provideFix81Cases')]
+    #[RequiresPhp('>= 8.1.0')]
     public function testFix81(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
@@ -966,13 +976,33 @@ enum Foo: string {
 
 var_dump(Foo::A.Foo::B);",
         ];
+
+        yield [
+            <<<'PHP'
+                <?php
+                class Foo
+                {
+                    final const A = 1;
+                    final const B = 2;
+                }
+                PHP,
+            <<<'PHP'
+                <?php
+                class Foo
+                {
+                    final const A = 1, B = 2;
+                }
+                PHP,
+        ];
     }
 
     /**
      * @dataProvider provideFix82Cases
      *
-     * @requires PHP 8.2
+     * @requires PHP >= 8.2.0
      */
+    #[DataProvider('provideFix82Cases')]
+    #[RequiresPhp('>= 8.2.0')]
     public function testFix82(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
@@ -992,8 +1022,10 @@ var_dump(Foo::A.Foo::B);",
     /**
      * @dataProvider provideFix84Cases
      *
-     * @requires PHP 8.4
+     * @requires PHP >= 8.4.0
      */
+    #[DataProvider('provideFix84Cases')]
+    #[RequiresPhp('>= 8.4.0')]
     public function testFix84(string $expected, ?string $input = null): void
     {
         $this->doTest($expected, $input);
@@ -1020,6 +1052,20 @@ var_dump(Foo::A.Foo::B);",
                     public public(set) int $a, $b;
                     public protected(set) int $c, $d;
                     public private(set) int $e, $f;
+                }
+                PHP,
+        ];
+
+        yield 'final property' => [
+            <<<'PHP'
+                <?php class Foo {
+                    final public int $a = 1;
+                    final public int $b = 2;
+                }
+                PHP,
+            <<<'PHP'
+                <?php class Foo {
+                    final public int $a = 1, $b = 2;
                 }
                 PHP,
         ];
